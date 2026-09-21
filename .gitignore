@@ -1,4 +1,5 @@
 .codex/
+.openai/
 .sites-runtime/
 tmp/
 upload/

@@ -1,0 +1,6 @@
+.codex/
+.sites-runtime/
+tmp/
+upload/
+generated_images/
+.DS_Store

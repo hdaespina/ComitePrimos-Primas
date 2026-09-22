@@ -31,7 +31,7 @@ window.addEventListener('scroll', updateHeader, { passive: true });
 
 const stickyCta = document.querySelector('[data-sticky-cta]');
 const topSection = document.querySelector('main section');
-const joinSection = document.querySelector('#unirme');
+const joinSection = document.querySelector('#unirme, .reading-cta');
 
 if (stickyCta && topSection && 'IntersectionObserver' in window) {
   let pastTop = false;

@@ -92,6 +92,32 @@ El llamado a la acción principal del sitio es inscribirse como socio llenando u
 - La altura del `iframe` está fijada en CSS (`.form-embed iframe`, con ajustes en los media queries de 1020px/780px) porque Google Forms no se autoajusta de alto. Si el formulario real queda más largo o corto que el actual, ajusta esas alturas usando `responsive-qa`.
 - No cambies este mecanismo (por ejemplo, a Supabase o Formspree) sin confirmarlo antes con el dueño del proyecto — fue una decisión explícita.
 
+## Dos llamados a la acción: "Conversar" y "Ficha de inscripción"
+
+El sitio siempre ofrece dos caminos, no uno solo — resolver una duda antes de comprometerse, o inscribirse directamente:
+
+- **Conversar por WhatsApp**: aparece en tres lugares — los hero-actions (`dist/index.html`), la intro de `#preguntas`, y justo arriba del formulario embebido (`.form-card-note`). Los tres usan el mismo link `https://wa.me/<número>?text=<duda precargada>`.
+- **Llenar ficha de inscripción**: el botón primario del hero y el formulario embebido en `#unirme` → `#formulario`.
+
+**El número de WhatsApp (+502 5698-0267) es un placeholder de ejemplo** puesto por el dueño del proyecto — está marcado con un comentario `TODO` en `dist/index.html` (arriba del botón del hero). Hay que reemplazarlo por el número/contacto definitivo del comité antes de compartir el sitio públicamente con la familia. Si cambia, actualízalo en los tres lugares (buscar `wa.me/50256980267`).
+
+Un link de grupo de WhatsApp (`chat.whatsapp.com/...`) no permite precargar el mensaje/duda — por eso se eligió un número individual (`wa.me`) en vez de un grupo; si más adelante el comité prefiere dirigir a un grupo, hay que cambiar el copy también ("conversemos" ya no aplicaría igual, sería más bien "únete al grupo").
+
+## Proceso físico + digital de inscripción (evitar carga operativa)
+
+El comité históricamente usa una ficha de inscripción en papel (ver la foto compartida por el dueño del proyecto — "Comité de Ahorro y Préstamo Los Primos y Las Primas"). El formulario digital reemplaza el trámite en papel para el socio, pero el comité sigue necesitando el documento físico/PDF para su archivo — sin que nadie tenga que transcribir cada inscripción a mano.
+
+**Solución recomendada: Form Publisher** (add-on gratuito de Google Workspace Marketplace, sin código):
+1. Crear una plantilla de Google Docs con el mismo diseño/campos de la ficha física (Nombre, Fecha de nacimiento, Domicilio/Teléfono, No. de acciones/aportaciones, Beneficiarios, Observaciones, etc.).
+2. Instalar el add-on "Form Publisher" desde el Google Form del comité (Extensiones → Complementos).
+3. Mapear cada pregunta del Form a su espacio correspondiente en la plantilla.
+4. Configurar la regla de automatización: por cada respuesta nueva, genera el PDF y lo guarda en una carpeta de Drive (y/o lo envía por correo a quien administre el comité).
+5. El plan gratuito de Form Publisher tiene un límite de documentos/mes — verificar el límite vigente en su sitio; para el volumen actual del comité (20 socios activos, crecimiento lento) normalmente alcanza de sobra.
+
+**Alternativa con más control: Google Apps Script**, si el plan gratuito de Form Publisher se queda corto o se necesita un formato más exacto — un script conectado al Form que arma el PDF automáticamente en cada envío. Requiere pegar código una vez en el editor de Apps Script de la cuenta de Google del comité; pedir a Claude que lo escriba si se necesita.
+
+Ninguna de las dos automatizaciones se implementó en este repositorio — dependen de la cuenta de Google del comité y de que exista el Google Form real (sigue en `PLACEHOLDER_FORM_ID`), no del código del sitio estático.
+
 ## Otros componentes del sitio
 
 - **Preguntas frecuentes** (`#preguntas` en `dist/index.html`): acordeón nativo con `<details>/<summary>` (sin JS) que responde las objeciones más comunes antes de llenar el formulario. Las respuestas están redactadas para no inventar datos que no estén en `content/comite-primos-primas.md` o en el reglamento — si agregas una pregunta nueva, no inventes cifras ni condiciones, remite al reglamento vigente cuando no tengas el dato exacto.

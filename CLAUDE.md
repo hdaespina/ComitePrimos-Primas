@@ -18,6 +18,8 @@ Landing page pública para dar a conocer el comité familiar a los parientes y l
 ├── README.md                      # instrucciones rápidas para humanos
 ├── content/
 │   └── comite-primos-primas.md    # fuente de verdad del contenido (historia, misión, visión, valores, servicios)
+├── docs/
+│   └── form-publisher-setup.md    # guía operativa para configurar el PDF automático de inscripción (no es código del sitio)
 ├── dist/                          # sitio estático — esto es lo que se publica, sin build step
 │   ├── index.html
 │   ├── historia.html              # lectura completa de la historia del comité (link desde #historia)
@@ -86,14 +88,7 @@ El llamado a la acción principal del sitio es inscribirse como socio llenando u
 - Actualmente usa un **placeholder**: `PLACEHOLDER_FORM_ID` aparece dos veces en `dist/inscripcion.html` (el `src` del `iframe` y el link de fallback "Ábrelo en una pestaña nueva"). Hay que reemplazarlo por el ID real en cuanto exista el Google Form del comité.
   - El `src` del iframe debe ser la URL de "Insertar" de Google Forms con `?embedded=true`.
   - El link de fallback debe ser la misma URL sin `?embedded=true` (el `viewform` normal), con `target="_blank"`.
-- Campos sugeridos para el Google Form (agrupar en este orden):
-  1. Nombre completo
-  2. Familiar que lo invitó / rama familiar
-  3. Teléfono (WhatsApp)
-  4. Correo electrónico
-  5. ¿Ya participabas antes en las actividades del equipo/comité? (sí/no)
-  6. ¿Por qué quieres unirte? (opcional, texto libre)
-  7. Confirmación de que leerá el reglamento antes de su primera aportación (checkbox)
+- **Campos del Google Form**: la lista completa y definitiva (16 preguntas, con el texto exacto y el tipo de campo de cada una) vive en `docs/form-publisher-setup.md` → Paso 1 — ese archivo es la fuente de verdad, no la repitas de memoria en otro lugar. Incluye los campos mínimos para inscribirse y los que necesita el PDF automático (fecha de nacimiento, DPI, acciones/aportaciones, beneficiarios, confirmación de firma electrónica) — están todos en el mismo Form, no en dos formularios separados.
 - La altura del `iframe` está fijada en CSS (`.form-embed iframe`, con ajustes en los media queries de 1020px/780px) porque Google Forms no se autoajusta de alto. Si el formulario real queda más largo o corto que el actual, ajusta esas alturas usando `responsive-qa`.
 - No cambies este mecanismo (por ejemplo, a Supabase o Formspree) sin confirmarlo antes con el dueño del proyecto — fue una decisión explícita.
 
@@ -112,12 +107,7 @@ Un link de grupo de WhatsApp (`chat.whatsapp.com/...`) no permite precargar el m
 
 El comité históricamente usa una ficha de inscripción en papel (ver la foto compartida por el dueño del proyecto — "Comité de Ahorro y Préstamo Los Primos y Las Primas"). El formulario digital reemplaza el trámite en papel para el socio, pero el comité sigue necesitando el documento físico/PDF para su archivo — sin que nadie tenga que transcribir cada inscripción a mano.
 
-**Solución recomendada: Form Publisher** (add-on gratuito de Google Workspace Marketplace, sin código):
-1. Crear una plantilla de Google Docs con el mismo diseño/campos de la ficha física (Nombre, Fecha de nacimiento, Domicilio/Teléfono, No. de acciones/aportaciones, Beneficiarios, Observaciones, etc.).
-2. Instalar el add-on "Form Publisher" desde el Google Form del comité (Extensiones → Complementos).
-3. Mapear cada pregunta del Form a su espacio correspondiente en la plantilla.
-4. Configurar la regla de automatización: por cada respuesta nueva, genera el PDF y lo guarda en una carpeta de Drive (y/o lo envía por correo a quien administre el comité).
-5. El plan gratuito de Form Publisher tiene un límite de documentos/mes — verificar el límite vigente en su sitio; para el volumen actual del comité (20 socios activos, crecimiento lento) normalmente alcanza de sobra.
+**Solución recomendada: Form Publisher** (add-on gratuito de Google Workspace Marketplace, sin código). La guía completa y lista para seguir paso a paso — incluye las 16 preguntas exactas del Google Form, la plantilla de Google Docs con las etiquetas de fusión (`{{...}}`) ya redactada para copiar y pegar, la configuración del add-on, y el checklist de prueba — está en **[`docs/form-publisher-setup.md`](./docs/form-publisher-setup.md)**. No dupliques esos pasos aquí; si cambian, actualízalos solo en ese archivo.
 
 **Alternativa con más control: Google Apps Script**, si el plan gratuito de Form Publisher se queda corto o se necesita un formato más exacto — un script conectado al Form que arma el PDF automáticamente en cada envío. Requiere pegar código una vez en el editor de Apps Script de la cuenta de Google del comité; pedir a Claude que lo escriba si se necesita.
 

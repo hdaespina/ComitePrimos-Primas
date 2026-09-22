@@ -20,6 +20,8 @@ Ver `CLAUDE.md` para el contexto completo del proyecto (estructura, identidad de
 
 El formulario vive en `dist/inscripcion.html` (no en la landing) e incrusta un Google Form. Antes de publicar, reemplaza el placeholder `PLACEHOLDER_FORM_ID` en ese archivo por el ID real del formulario (ver detalles en `CLAUDE.md`).
 
+Para que cada inscripción genere automáticamente un PDF con el formato de la ficha física del comité (sin transcribir nada a mano), sigue la guía paso a paso en [`docs/form-publisher-setup.md`](./docs/form-publisher-setup.md).
+
 ## Vista local
 
 Abre `dist/index.html` en un navegador moderno, o sirve la carpeta con `npx serve dist`.

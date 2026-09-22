@@ -45,14 +45,16 @@ Tono de voz: cálido, familiar, cercano; nunca corporativo/bancario. Evitar leng
 
 | Archivo | Qué es | Cuándo usarlo |
 |---|---|---|
-| `simbolo-primos-primas.png` | Emblema a color (aro + 3 figuras), fondo transparente | Uso por defecto: header, footer, cita destacada — sobre fondos claros u oscuros con suficiente contraste |
-| `simbolo-blanco.png` | Emblema en blanco (solo líneas), fondo transparente | Sobre fondos de color sólido oscuro/saturado donde el emblema a color se vea recargado (se usó para generar `apple-touch-icon.png`) |
+| `simbolo-primos-primas.png` | Emblema a color (aro + 3 figuras), fondo transparente | Solo sobre fondos **claros** — el trazo del aro y la figura central son azul marca, así que sobre fondo oscuro/navy se funde y se pierde el contorno (ver corrección de diseño más abajo). Hoy no se usa en ningún fondo del sitio, pero queda disponible para piezas futuras sobre blanco (impresos, documentos). |
+| `simbolo-blanco.png` | Emblema en blanco (solo líneas), fondo transparente | **Uso por defecto en el sitio**: header, footer y cita destacada — los tres son fondos azul marino sólido/semitransparente, donde el blanco da contraste total y mantiene visible el contorno completo. También se usó para generar `apple-touch-icon.png`. |
 | `simbolo-monocromo.png` | Emblema en azul marca sólido, fondo transparente | Reproducción a un solo color: impresión en blanco y negro, marcas de agua, contextos donde el color no se pueda garantizar |
 | `logotipo-color.png` | Lockup horizontal completo (emblema + "PRIMOS & PRIMAS" + tagline) a color, sobre fondo transparente | Piezas formales fuera del sitio: firma de correo, documentos, impresos, portada de redes — no está pensado para incrustarse en el sitio, que ya arma su propio lockup en HTML/CSS en el header y footer |
 | `logotipo-blanco.png` | Mismo lockup horizontal, en blanco, fondo transparente | Igual que el anterior pero para fondos oscuros/de color |
 | `apple-touch-icon.png` | 180×180, fondo azul marca + `simbolo-blanco` centrado | Ícono al agregar el sitio a la pantalla de inicio en iOS/Android (enlazado en el `<head>` de `index.html` e `historia.html`) |
 
 `favicon.svg` es un diseño aparte, hecho a mano para verse bien en el tamaño diminuto de la pestaña del navegador — no se reemplaza por estos assets.
+
+**Corrección de diseño (no revertir)**: header, footer y cita destacada usaban originalmente `simbolo-primos-primas.png` (color). Se corrigió a `simbolo-blanco.png` porque el trazo azul marca del emblema se perdía contra esos fondos navy — antes de este cambio, el aro y la figura central del logo prácticamente desaparecían y solo se veían las figuras verde/naranja flotando. Si agregas el emblema en un lugar nuevo, revisa primero el color de fondo: sólido/oscuro → `simbolo-blanco.png`; claro → `simbolo-primos-primas.png`.
 
 ## Convenciones de trabajo
 

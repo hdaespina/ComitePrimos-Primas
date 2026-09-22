@@ -5,7 +5,7 @@ Landing page pública para dar a conocer el comité familiar a los parientes y l
 ## Qué es el proyecto
 
 - **Audiencia**: familiares (primos y primas) invitados por otro miembro de la familia. No es una institución abierta al público.
-- **Objetivo de negocio**: explicar qué es el comité, sus beneficios/servicios, y convertir visitas en solicitudes de membresía a través de un formulario de onboarding (sección `#unirme`).
+- **Objetivo de negocio**: explicar qué es el comité, sus beneficios/servicios, y convertir visitas en solicitudes de membresía a través de un formulario de onboarding, en su propia página (`dist/inscripcion.html`).
 - **Fuente de contenido canónica**: `content/comite-primos-primas.md` — transcripción del documento fundacional (historia, propósito, misión, visión, valores y servicios). Cualquier cambio de copy en el sitio debe basarse en ese archivo; si el documento fuente cambia, actualiza primero `content/comite-primos-primas.md` y luego el HTML.
 - Dos servicios del documento están marcados como **(Propuesta)** — Pequeños Ahorradores, Educación financiera — y uno como **(Retomarlo)** — Viajes y experiencias. El sitio debe seguir distinguiéndolos visualmente de los servicios activos (ver `.tag-proposal` / `.tag-revisit` en `dist/styles.css`) y nunca presentarlos como beneficios ya disponibles.
 - **Cifras del comité** (fundado en los años 90, +80 socios históricos, 20 socios activos, 4 generaciones): viven en `content/comite-primos-primas.md` → sección "Cifras del comité" y se muestran en `dist/index.html` → sección `.stats`. Si estos números cambian, actualiza ambos lugares.
@@ -21,6 +21,7 @@ Landing page pública para dar a conocer el comité familiar a los parientes y l
 ├── dist/                          # sitio estático — esto es lo que se publica, sin build step
 │   ├── index.html
 │   ├── historia.html              # lectura completa de la historia del comité (link desde #historia)
+│   ├── inscripcion.html           # formulario de inscripción, en su propia página (no embebido en index.html)
 │   ├── styles.css
 │   ├── script.js
 │   ├── favicon.svg
@@ -60,6 +61,7 @@ Tono de voz: cálido, familiar, cercano; nunca corporativo/bancario. Evitar leng
 - No agregues dependencias de terceros (frameworks JS, CDNs) sin necesidad real; el sitio funciona hoy con HTML/CSS/JS vanilla.
 - Cambios de copy: edita `content/comite-primos-primas.md` primero, luego refleja el cambio en `dist/index.html` (y en `dist/historia.html` si el cambio afecta la sección "Historia").
 - `dist/historia.html` reutiliza el mismo header/nav/footer que `dist/index.html` (con rutas `./index.html#...`) y muestra el relato completo de la sección "Historia" de `content/comite-primos-primas.md` en formato de lectura larga. Si la historia del documento fuente cambia, actualiza ambos: la versión resumida del timeline en `dist/index.html#historia` y el texto completo en `dist/historia.html`.
+- `dist/inscripcion.html` reutiliza el mismo header/nav/footer y el patrón visual de `dist/historia.html` (`.reading-hero` + `.reading`), pero en vez del relato largo contiene el `.form-card` con el formulario embebido. Es la única página que tiene el iframe del formulario — `dist/index.html` solo enlaza hacia ella.
 
 ## Cómo previsualizar
 
@@ -73,12 +75,13 @@ npx serve dist
 
 `git push` a `main` dispara `.github/workflows/pages.yml`, que publica el contenido de `dist/` en GitHub Pages. No se requiere paso de build.
 
-## Formulario de onboarding (`#unirme`)
+## Formulario de onboarding (`dist/inscripcion.html`)
 
-El llamado a la acción principal del sitio es inscribirse como socio llenando un formulario (decisión tomada: **Google Form embebido** vía `<iframe>`, no un backend propio).
+El llamado a la acción principal del sitio es inscribirse como socio llenando un formulario (decisión tomada: **Google Form embebido** vía `<iframe>`, no un backend propio, y en **su propia página** — no embebido dentro de `index.html` — para no cargar la landing con el peso/carga del formulario y para poder compartir un link directo solo al formulario).
 
-- El formulario vive en `dist/index.html`, sección `#unirme` → `.form-card` → `.form-embed iframe`.
-- Actualmente usa un **placeholder**: `PLACEHOLDER_FORM_ID` aparece dos veces (el `src` del `iframe` y el link de fallback "Ábrelo en una pestaña nueva"). Hay que reemplazarlo por el ID real en cuanto exista el Google Form del comité.
+- El formulario vive en `dist/inscripcion.html` → `.form-card` → `.form-embed iframe`. `dist/index.html` no tiene el iframe: su sección `#unirme` → `.form-card` termina en un botón "Llenar ficha de inscripción" que enlaza a `./inscripcion.html`.
+- Todos los CTA "Llenar ficha de inscripción" / "Quiero inscribirme" del sitio (hero, sticky-cta de `index.html` e `historia.html`, micro-CTA de Jóvenes) apuntan directo a `./inscripcion.html`. El `nav-cta` ("Quiero formar parte") y el paso 3 de `#unirme` siguen apuntando a `#unirme` — ahí se explica el proceso antes de mandar a la persona a la página del formulario.
+- Actualmente usa un **placeholder**: `PLACEHOLDER_FORM_ID` aparece dos veces en `dist/inscripcion.html` (el `src` del `iframe` y el link de fallback "Ábrelo en una pestaña nueva"). Hay que reemplazarlo por el ID real en cuanto exista el Google Form del comité.
   - El `src` del iframe debe ser la URL de "Insertar" de Google Forms con `?embedded=true`.
   - El link de fallback debe ser la misma URL sin `?embedded=true` (el `viewform` normal), con `target="_blank"`.
 - Campos sugeridos para el Google Form (agrupar en este orden):
@@ -96,10 +99,10 @@ El llamado a la acción principal del sitio es inscribirse como socio llenando u
 
 El sitio siempre ofrece dos caminos, no uno solo — resolver una duda antes de comprometerse, o inscribirse directamente:
 
-- **Conversar por WhatsApp**: aparece en tres lugares — los hero-actions (`dist/index.html`), la intro de `#preguntas`, y justo arriba del formulario embebido (`.form-card-note`). Los tres usan el mismo link `https://wa.me/<número>?text=<duda precargada>`.
-- **Llenar ficha de inscripción**: el botón primario del hero y el formulario embebido en `#unirme` → `#formulario`.
+- **Conversar por WhatsApp**: aparece en tres lugares — los hero-actions (`dist/index.html`), la intro de `#preguntas`, y justo arriba del formulario (`.form-card-note`, presente tanto en la tarjeta-CTA de `index.html` como en el formulario real de `inscripcion.html`). Los tres usan el mismo link `https://wa.me/<número>?text=<duda precargada>`.
+- **Llenar ficha de inscripción**: el botón primario del hero, el botón al final de `#unirme`, la barra sticky y el micro-CTA de Jóvenes — todos enlazan a `./inscripcion.html`, la página donde vive el formulario real.
 
-**El número de WhatsApp (+502 5698-0267) es un placeholder de ejemplo** puesto por el dueño del proyecto — está marcado con un comentario `TODO` en `dist/index.html` (arriba del botón del hero). Hay que reemplazarlo por el número/contacto definitivo del comité antes de compartir el sitio públicamente con la familia. Si cambia, actualízalo en los tres lugares (buscar `wa.me/50256980267`).
+**El número de WhatsApp (+502 5698-0267) es un placeholder de ejemplo** puesto por el dueño del proyecto — está marcado con un comentario `TODO` en `dist/index.html` (arriba del botón del hero). Hay que reemplazarlo por el número/contacto definitivo del comité antes de compartir el sitio públicamente con la familia. Si cambia, actualízalo en `dist/index.html` (hero, FAQ y form-card-note) y en `dist/inscripcion.html` (form-card-note) — buscar `wa.me/50256980267`.
 
 Un link de grupo de WhatsApp (`chat.whatsapp.com/...`) no permite precargar el mensaje/duda — por eso se eligió un número individual (`wa.me`) en vez de un grupo; si más adelante el comité prefiere dirigir a un grupo, hay que cambiar el copy también ("conversemos" ya no aplicaría igual, sería más bien "únete al grupo").
 
@@ -122,9 +125,9 @@ Ninguna de las dos automatizaciones se implementó en este repositorio — depen
 
 - **Preguntas frecuentes** (`#preguntas` en `dist/index.html`): acordeón nativo con `<details>/<summary>` (sin JS) que responde las objeciones más comunes antes de llenar el formulario. Las respuestas están redactadas para no inventar datos que no estén en `content/comite-primos-primas.md` o en el reglamento — si agregas una pregunta nueva, no inventes cifras ni condiciones, remite al reglamento vigente cuando no tengas el dato exacto.
 - **Compartir con un familiar** (botón en `#unirme`, `data-share-invite` en `dist/script.js`): usa `navigator.share()` en mobile (comparte nativamente por WhatsApp, etc.) y cae a copiar el link al portapapeles si el navegador no soporta Web Share API.
-- **Barra de CTA fija en mobile** (`.sticky-cta` en `dist/styles.css` y `dist/script.js`): aparece al hacer scroll más allá de la primera sección de cada página y se oculta permanentemente una vez que el visitante llega a `#unirme` (o, en `historia.html`, se mantiene visible porque esa página no tiene su propia sección `#unirme`). Solo visible en mobile (`<=780px`); en desktop el CTA del header ya es siempre visible.
+- **Barra de CTA fija en mobile** (`.sticky-cta` en `dist/styles.css` y `dist/script.js`): aparece al hacer scroll más allá de la primera sección de cada página y se oculta permanentemente una vez que el visitante llega a `#unirme`. Enlaza a `./inscripcion.html` (no a `#unirme`) en `index.html` e `historia.html` — la sección `#unirme` sigue siendo la señal para ocultarla, pero el destino del botón es directo al formulario. `inscripcion.html` no tiene esta barra (ya está en la página del formulario). Solo visible en mobile (`<=780px`); en desktop el CTA del header ya es siempre visible.
 - **Íconos de programas** (`.program-icon` en `dist/index.html`/`styles.css`): SVG inline decorativos (`aria-hidden="true"`) junto a cada tarjeta de `#programas`, sin dependencias externas.
-- **Meta tags Open Graph / Twitter** (`<head>` de `dist/index.html` e `dist/historia.html`): controlan cómo se ve el link al compartirse por WhatsApp/redes. Usan `https://hdaespina.github.io/ComitePrimos-Primas/` como URL base — si el sitio se mueve a un dominio propio, actualiza `og:url`, `og:image`, `twitter:image` en ambos archivos.
+- **Meta tags Open Graph / Twitter** (`<head>` de `dist/index.html`, `dist/historia.html` y `dist/inscripcion.html`): controlan cómo se ve el link al compartirse por WhatsApp/redes. Usan `https://hdaespina.github.io/ComitePrimos-Primas/` como URL base — si el sitio se mueve a un dominio propio, actualiza `og:url`, `og:image`, `twitter:image` en los tres archivos.
 
 ## Accesibilidad — decisiones ya corregidas (no revertir)
 

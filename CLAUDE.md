@@ -36,9 +36,22 @@ No hay bundler ni paso de build: `dist/` se edita directamente y se publica tal 
 Colores (definidos como variables CSS en `dist/styles.css`):
 - Azul marca: `--blue-900 #082f66` (y variantes `--blue-950/800/700/100/050`)
 - Verde: `--green-700 #16834f`
-- Naranja (acento/CTA): `--orange-600 #f36b21`
+- Naranja (acento/CTA): `--orange-600 #f36b21` / `--orange-700 #b34e17` (variante oscura para texto sobre fondo claro, ver sección de accesibilidad)
 
 Tono de voz: cálido, familiar, cercano; nunca corporativo/bancario. Evitar lenguaje que suene a institución financiera regulada abierta al público — el comité es privado y familiar. Todo el copy está en español.
+
+### Assets de marca (`dist/assets/`)
+
+| Archivo | Qué es | Cuándo usarlo |
+|---|---|---|
+| `simbolo-primos-primas.png` | Emblema a color (aro + 3 figuras), fondo transparente | Uso por defecto: header, footer, cita destacada — sobre fondos claros u oscuros con suficiente contraste |
+| `simbolo-blanco.png` | Emblema en blanco (solo líneas), fondo transparente | Sobre fondos de color sólido oscuro/saturado donde el emblema a color se vea recargado (se usó para generar `apple-touch-icon.png`) |
+| `simbolo-monocromo.png` | Emblema en azul marca sólido, fondo transparente | Reproducción a un solo color: impresión en blanco y negro, marcas de agua, contextos donde el color no se pueda garantizar |
+| `logotipo-color.png` | Lockup horizontal completo (emblema + "PRIMOS & PRIMAS" + tagline) a color, sobre fondo transparente | Piezas formales fuera del sitio: firma de correo, documentos, impresos, portada de redes — no está pensado para incrustarse en el sitio, que ya arma su propio lockup en HTML/CSS en el header y footer |
+| `logotipo-blanco.png` | Mismo lockup horizontal, en blanco, fondo transparente | Igual que el anterior pero para fondos oscuros/de color |
+| `apple-touch-icon.png` | 180×180, fondo azul marca + `simbolo-blanco` centrado | Ícono al agregar el sitio a la pantalla de inicio en iOS/Android (enlazado en el `<head>` de `index.html` e `historia.html`) |
+
+`favicon.svg` es un diseño aparte, hecho a mano para verse bien en el tamaño diminuto de la pestaña del navegador — no se reemplaza por estos assets.
 
 ## Convenciones de trabajo
 

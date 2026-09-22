@@ -19,6 +19,7 @@ Landing page pública para dar a conocer el comité familiar a los parientes y l
 │   └── comite-primos-primas.md    # fuente de verdad del contenido (historia, misión, visión, valores, servicios)
 ├── dist/                          # sitio estático — esto es lo que se publica, sin build step
 │   ├── index.html
+│   ├── historia.html              # lectura completa de la historia del comité (link desde #historia)
 │   ├── styles.css
 │   ├── script.js
 │   ├── favicon.svg
@@ -43,7 +44,8 @@ Tono de voz: cálido, familiar, cercano; nunca corporativo/bancario. Evitar leng
 - **Mobile-first de verdad**: la mayoría de la familia entra desde el celular. Cualquier sección o componente nuevo se prueba primero en viewport angosto (360–430px) y luego se escala hacia arriba. Breakpoints existentes: `1020px`, `780px`, `430px` en `dist/styles.css`.
 - **Accesibilidad**: mantener `skip-link`, `aria-*` en el menú y el formulario, foco visible (`:focus-visible`), y `prefers-reduced-motion`.
 - No agregues dependencias de terceros (frameworks JS, CDNs) sin necesidad real; el sitio funciona hoy con HTML/CSS/JS vanilla.
-- Cambios de copy: edita `content/comite-primos-primas.md` primero, luego refleja el cambio en `dist/index.html`.
+- Cambios de copy: edita `content/comite-primos-primas.md` primero, luego refleja el cambio en `dist/index.html` (y en `dist/historia.html` si el cambio afecta la sección "Historia").
+- `dist/historia.html` reutiliza el mismo header/nav/footer que `dist/index.html` (con rutas `./index.html#...`) y muestra el relato completo de la sección "Historia" de `content/comite-primos-primas.md` en formato de lectura larga. Si la historia del documento fuente cambia, actualiza ambos: la versión resumida del timeline en `dist/index.html#historia` y el texto completo en `dist/historia.html`.
 
 ## Cómo previsualizar
 

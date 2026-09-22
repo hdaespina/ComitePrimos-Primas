@@ -92,7 +92,7 @@ Guarda el documento con un nombre claro, por ejemplo **"Plantilla — Ficha de i
 
 ## Paso 3 — Instalar y configurar Form Publisher
 
-1. Abre el Google Form del comité (el mismo cuyo ID reemplazará `PLACEHOLDER_FORM_ID` en `dist/inscripcion.html`).
+1. Abre el Google Form del comité (el mismo que está conectado en `dist/inscripcion.html`).
 2. Ve a **Extensiones → Complementos → Obtener complementos**, busca **"Form Publisher"** e instálalo. Autoriza los permisos que pida (necesita acceso a Forms, Docs y Drive para poder generar y guardar los PDF).
 3. Abre **Extensiones → Form Publisher → Create configuration**.
 4. Cuando pregunte por la plantilla, elige **"Use an existing template"** y selecciona el Google Doc del Paso 2.
@@ -105,7 +105,7 @@ Guarda el documento con un nombre claro, por ejemplo **"Plantilla — Ficha de i
 
 ## Paso 4 — Probar que funciona
 
-1. Abre el link público del Google Form (el mismo que reemplaza `PLACEHOLDER_FORM_ID`) y llénalo tú mismo con datos de prueba.
+1. Abre el link público del Google Form y llénalo tú mismo con datos de prueba.
 2. Al enviarlo, espera unos segundos y revisa la carpeta de Drive del Paso 3 — debe aparecer un PDF nuevo con el nombre configurado.
 3. Ábrelo y confirma que cada campo aparece en el lugar correcto y que el diseño se parece a la ficha física original.
 4. Si configuraste la notificación por correo, confirma que también llegó ahí.

@@ -8,6 +8,7 @@ Landing page pública para dar a conocer el comité familiar a los parientes y l
 - **Objetivo de negocio**: explicar qué es el comité, sus beneficios/servicios, y convertir visitas en solicitudes de membresía a través de un formulario de onboarding (sección `#unirme`).
 - **Fuente de contenido canónica**: `content/comite-primos-primas.md` — transcripción del documento fundacional (historia, propósito, misión, visión, valores y servicios). Cualquier cambio de copy en el sitio debe basarse en ese archivo; si el documento fuente cambia, actualiza primero `content/comite-primos-primas.md` y luego el HTML.
 - Dos servicios del documento están marcados como **(Propuesta)** — Pequeños Ahorradores, Educación financiera — y uno como **(Retomarlo)** — Viajes y experiencias. El sitio debe seguir distinguiéndolos visualmente de los servicios activos (ver `.tag-proposal` / `.tag-revisit` en `dist/styles.css`) y nunca presentarlos como beneficios ya disponibles.
+- **Cifras del comité** (fundado en los años 90, +80 socios históricos, 20 socios activos, 4 generaciones): viven en `content/comite-primos-primas.md` → sección "Cifras del comité" y se muestran en `dist/index.html` → sección `.stats`. Si estos números cambian, actualiza ambos lugares.
 
 ## Estructura del proyecto
 
@@ -77,6 +78,28 @@ El llamado a la acción principal del sitio es inscribirse como socio llenando u
   7. Confirmación de que leerá el reglamento antes de su primera aportación (checkbox)
 - La altura del `iframe` está fijada en CSS (`.form-embed iframe`, con ajustes en los media queries de 1020px/780px) porque Google Forms no se autoajusta de alto. Si el formulario real queda más largo o corto que el actual, ajusta esas alturas usando `responsive-qa`.
 - No cambies este mecanismo (por ejemplo, a Supabase o Formspree) sin confirmarlo antes con el dueño del proyecto — fue una decisión explícita.
+
+## Otros componentes del sitio
+
+- **Preguntas frecuentes** (`#preguntas` en `dist/index.html`): acordeón nativo con `<details>/<summary>` (sin JS) que responde las objeciones más comunes antes de llenar el formulario. Las respuestas están redactadas para no inventar datos que no estén en `content/comite-primos-primas.md` o en el reglamento — si agregas una pregunta nueva, no inventes cifras ni condiciones, remite al reglamento vigente cuando no tengas el dato exacto.
+- **Compartir con un familiar** (botón en `#unirme`, `data-share-invite` en `dist/script.js`): usa `navigator.share()` en mobile (comparte nativamente por WhatsApp, etc.) y cae a copiar el link al portapapeles si el navegador no soporta Web Share API.
+- **Barra de CTA fija en mobile** (`.sticky-cta` en `dist/styles.css` y `dist/script.js`): aparece al hacer scroll más allá de la primera sección de cada página y se oculta permanentemente una vez que el visitante llega a `#unirme` (o, en `historia.html`, se mantiene visible porque esa página no tiene su propia sección `#unirme`). Solo visible en mobile (`<=780px`); en desktop el CTA del header ya es siempre visible.
+- **Íconos de programas** (`.program-icon` en `dist/index.html`/`styles.css`): SVG inline decorativos (`aria-hidden="true"`) junto a cada tarjeta de `#programas`, sin dependencias externas.
+- **Meta tags Open Graph / Twitter** (`<head>` de `dist/index.html` e `dist/historia.html`): controlan cómo se ve el link al compartirse por WhatsApp/redes. Usan `https://hdaespina.github.io/ComitePrimos-Primas/` como URL base — si el sitio se mueve a un dominio propio, actualiza `og:url`, `og:image`, `twitter:image` en ambos archivos.
+
+## Accesibilidad — decisiones ya corregidas (no revertir)
+
+Una auditoría de diseño encontró y corrigió estos problemas de contraste/tamaño; si tocas estos estilos, no reintroduzcas el problema:
+
+- El texto sobre fondo naranja (`--orange-600`) debe ser oscuro (`--blue-950`/`--blue-900`), nunca blanco — el blanco sobre ese naranja da ~3:1 de contraste, por debajo del mínimo WCAG AA (4.5:1). Afecta `.button-primary`, `.legacy-seal`, `.main-nav .nav-cta:hover`.
+- El texto naranja sobre fondo blanco/claro (números decorativos como `.card-number`, `.program-top > span`) debe usar `--orange-700` (`#b34e17`, ~5.2:1), no `--orange-600` directamente — el mismo problema de contraste aplica al revés.
+- `:focus-visible` usa un anillo oscuro + halo blanco (`outline` + `box-shadow`) para verse bien tanto en fondo claro como oscuro — la versión anterior (durazno claro) era casi invisible sobre fondo blanco (~1.4:1).
+- Ninguna etiqueta/microcopy del sitio debe bajar de `.8125rem` (13px), salvo el tagline decorativo del logo en el header (que siempre va acompañado del nombre completo en tamaño mayor).
+
+## Próximos pasos sugeridos (no implementados todavía)
+
+- **Prefill del campo "quién te invitó" vía `?ref=` en la URL**: se evaluó pero no se implementó porque requiere el `entry.XXXXXXX` real del campo del Google Form, que no existe todavía (el formulario sigue en `PLACEHOLDER_FORM_ID`). Una vez que el Google Form real esté conectado, se puede leer `new URLSearchParams(location.search).get('ref')` en `dist/script.js` y anexarlo al `src` del iframe y al link de fallback como `&entry.XXXXXXX=<valor>`.
+- **Analytics ligero** (ej. Plausible) para medir el embudo real (visitas → clics en CTA → envíos del formulario) — no agregado porque es una dependencia de terceros nueva; requiere decisión explícita del dueño del proyecto.
 
 ## Skills de este repo
 

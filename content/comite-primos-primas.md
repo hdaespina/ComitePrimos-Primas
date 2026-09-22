@@ -2,6 +2,15 @@
 
 > Fuente: documento fundacional del comité (PDF compartido por la familia). Esta transcripción es la referencia canónica para el copy del sitio. Si el documento original cambia, actualiza primero este archivo.
 
+## Cifras del comité
+
+> Fuente: proporcionadas directamente por el dueño del proyecto (no vienen del PDF fundacional). Se usan en la sección de estadísticas del sitio (`dist/index.html`, sección `.stats`). Actualiza aquí primero si estos números cambian.
+
+- **Origen**: años 90 (cancha de baloncesto).
+- **+80 socios** a lo largo de la historia del comité.
+- **20 socios activos** hoy.
+- **4 generaciones** de la familia representadas (Niñez, Jóvenes, Adultos, Mayores).
+
 ## Historia
 
 Todo comenzó en una cancha de baloncesto.

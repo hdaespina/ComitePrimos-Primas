@@ -85,9 +85,7 @@ El llamado a la acción principal del sitio es inscribirse como socio llenando u
 
 - El formulario vive en `dist/inscripcion.html` → `.form-card` → `.form-embed iframe`. `dist/index.html` no tiene el iframe: su sección `#unirme` → `.form-card` termina en un botón "Llenar ficha de inscripción" que enlaza a `./inscripcion.html`.
 - Todos los CTA "Llenar ficha de inscripción" / "Quiero inscribirme" del sitio (hero, sticky-cta de `index.html` e `historia.html`, micro-CTA de Jóvenes) apuntan directo a `./inscripcion.html`. El `nav-cta` ("Quiero formar parte") y el paso 3 de `#unirme` siguen apuntando a `#unirme` — ahí se explica el proceso antes de mandar a la persona a la página del formulario.
-- Actualmente usa un **placeholder**: `PLACEHOLDER_FORM_ID` aparece dos veces en `dist/inscripcion.html` (el `src` del `iframe` y el link de fallback "Ábrelo en una pestaña nueva"). Hay que reemplazarlo por el ID real en cuanto exista el Google Form del comité.
-  - El `src` del iframe debe ser la URL de "Insertar" de Google Forms con `?embedded=true`.
-  - El link de fallback debe ser la misma URL sin `?embedded=true` (el `viewform` normal), con `target="_blank"`.
+- El Google Form real del comité ya está conectado: ID `1FAIpQLScWN4IK62POvSHgihil0CW6I2sLC7W4-6HErXradeZQYVCqbA`, usado en `dist/inscripcion.html` tanto en el `src` del `iframe` (con `?embedded=true`) como en el link de fallback "Ábrelo en una pestaña nueva" (sin `?embedded=true`, con `target="_blank"`). Si el comité crea un Form nuevo en el futuro (por ejemplo, para separar temporadas de inscripción), reemplaza el ID en esos dos lugares.
 - **Campos del Google Form**: la lista completa y definitiva (16 preguntas, con el texto exacto y el tipo de campo de cada una) vive en `docs/form-publisher-setup.md` → Paso 1 — ese archivo es la fuente de verdad, no la repitas de memoria en otro lugar. Incluye los campos mínimos para inscribirse y los que necesita el PDF automático (fecha de nacimiento, DPI, acciones/aportaciones, beneficiarios, confirmación de firma electrónica) — están todos en el mismo Form, no en dos formularios separados.
 - La altura del `iframe` está fijada en CSS (`.form-embed iframe`, con ajustes en los media queries de 1020px/780px) porque Google Forms no se autoajusta de alto. Si el formulario real queda más largo o corto que el actual, ajusta esas alturas usando `responsive-qa`.
 - No cambies este mecanismo (por ejemplo, a Supabase o Formspree) sin confirmarlo antes con el dueño del proyecto — fue una decisión explícita.
@@ -111,7 +109,7 @@ El comité históricamente usa una ficha de inscripción en papel (ver la foto c
 
 **Alternativa con más control: Google Apps Script**, si el plan gratuito de Form Publisher se queda corto o se necesita un formato más exacto — un script conectado al Form que arma el PDF automáticamente en cada envío. Requiere pegar código una vez en el editor de Apps Script de la cuenta de Google del comité; pedir a Claude que lo escriba si se necesita.
 
-Ninguna de las dos automatizaciones se implementó en este repositorio — dependen de la cuenta de Google del comité y de que exista el Google Form real (sigue en `PLACEHOLDER_FORM_ID`), no del código del sitio estático.
+Ninguna de las dos automatizaciones se implementó en este repositorio — dependen de la cuenta de Google del comité, no del código del sitio estático. El Google Form real ya existe y está conectado (ver sección anterior); falta que quien administre esa cuenta siga `docs/form-publisher-setup.md` para activar el PDF automático.
 
 ## Otros componentes del sitio
 
@@ -132,7 +130,7 @@ Una auditoría de diseño encontró y corrigió estos problemas de contraste/tam
 
 ## Próximos pasos sugeridos (no implementados todavía)
 
-- **Prefill del campo "quién te invitó" vía `?ref=` en la URL**: se evaluó pero no se implementó porque requiere el `entry.XXXXXXX` real del campo del Google Form, que no existe todavía (el formulario sigue en `PLACEHOLDER_FORM_ID`). Una vez que el Google Form real esté conectado, se puede leer `new URLSearchParams(location.search).get('ref')` en `dist/script.js` y anexarlo al `src` del iframe y al link de fallback como `&entry.XXXXXXX=<valor>`.
+- **Prefill del campo "quién te invitó" vía `?ref=` en la URL**: se evaluó pero no se implementó porque requiere el `entry.XXXXXXX` real del campo "Familiar que lo invitó / rama familiar" del Google Form (se obtiene generando un link de "respuesta precargada" en Google Forms con ese campo lleno de un valor de prueba). Cuando se quiera implementar, se puede leer `new URLSearchParams(location.search).get('ref')` en `dist/script.js` y anexarlo al `src` del iframe y al link de fallback como `&entry.XXXXXXX=<valor>`.
 - **Analytics ligero** (ej. Plausible) para medir el embudo real (visitas → clics en CTA → envíos del formulario) — no agregado porque es una dependencia de terceros nueva; requiere decisión explícita del dueño del proyecto.
 
 ## Skills de este repo

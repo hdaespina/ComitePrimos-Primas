@@ -13,7 +13,7 @@ Ver `CLAUDE.md` para el contexto completo del proyecto (estructura, identidad de
 - `dist/historia.html`: lectura completa de la historia del comité.
 - `dist/inscripcion.html`: formulario de inscripción, en su propia página.
 - `dist/styles.css`: identidad visual y diseño adaptable.
-- `dist/script.js`: navegación móvil.
+- `dist/script.js`: navegación móvil, animaciones al hacer scroll e hilo de progreso (ver `CLAUDE.md` → "Animaciones al hacer scroll").
 - `dist/assets/`: emblema, logotipos e imagen principal.
 
 ## Formulario de inscripción

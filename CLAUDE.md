@@ -119,6 +119,23 @@ Ninguna de las dos automatizaciones se implementó en este repositorio — depen
 - **Íconos de programas** (`.program-icon` en `dist/index.html`/`styles.css`): SVG inline decorativos (`aria-hidden="true"`) junto a cada tarjeta de `#programas`, sin dependencias externas.
 - **Meta tags Open Graph / Twitter** (`<head>` de `dist/index.html`, `dist/historia.html` y `dist/inscripcion.html`): controlan cómo se ve el link al compartirse por WhatsApp/redes. Usan `https://hdaespina.github.io/ComitePrimos-Primas/` como URL base — si el sitio se mueve a un dominio propio, actualiza `og:url`, `og:image`, `twitter:image` en los tres archivos.
 
+## Animaciones al hacer scroll (sistema de movimiento)
+
+La landing usa un sistema de "scroll-reveal" + hilo de progreso, hecho 100% con CSS + JS vanilla (sin GSAP, AOS ni ninguna librería). Se eligió sobre parallax pesado o zoom cinematográfico porque la audiencia entra casi toda desde el celular y es de todas las edades.
+
+- **Cómo se activa**: un `<script>` inline en el `<head>` de `dist/index.html` agrega la clase `motion` a `<html>` solo si el navegador no pide `prefers-reduced-motion` y soporta `IntersectionObserver`. Todos los estados ocultos del CSS van detrás de `.motion`, así que **sin JS o con "reducir movimiento" todo el contenido se ve completo y estático**. Si `script.js` no carga en 2.5s, el mismo script inline quita `motion` (red de seguridad). No pongas estados ocultos (`opacity: 0`, etc.) fuera de `.motion`.
+- **Atributos en el HTML** (leídos por `dist/script.js`):
+  - `data-reveal` / `data-reveal="fade|scale|rise|left|right|pop|spin"`: el elemento aparece al entrar en pantalla (keyframes `rv-*` en `styles.css`). Se anima con `translate`/`scale`/`rotate` individuales, no con `transform`, para no pisar transforms propios del elemento (ej. `.hero-band`, `.legacy-seal`).
+  - `data-stagger="ms"` en un contenedor: los `data-reveal` dentro de él que entran juntos se escalonan.
+  - `data-split`: el título se divide en palabras que suben desde una máscara. Solo en elementos de texto plano (sin hijos HTML).
+  - `data-count="N"` (+ `data-prefix`): contador animado en `.stats`. El valor final ya está escrito en el HTML.
+  - `data-scroll-words`: la cita destacada se "ilumina" palabra por palabra según el scroll.
+  - `data-timeline`: la línea del timeline de `#historia` se dibuja y los círculos se activan con el scroll.
+  - `style="--d: Xms"`: retraso manual de entrada (usado en el hero).
+- **Hilo de progreso**: `.scroll-progress` (barra bajo el header, en `index.html` e `historia.html`) y `.story-rail` (riel de capítulos a la derecha, solo `>=1280px`, enlaza a los `id` de cada sección — si agregas una sección principal, agrégale `id` y un punto en el riel).
+- Íconos de `#programas` se dibujan trazo a trazo: cada `path/circle/ellipse` lleva `pathLength="1"`; si agregas un ícono nuevo, ponle ese atributo.
+- Todo el scroll pasa por un solo listener con `requestAnimationFrame` en `script.js` — no agregues otros listeners de scroll; extiende `update()`.
+
 ## Accesibilidad — decisiones ya corregidas (no revertir)
 
 Una auditoría de diseño encontró y corrigió estos problemas de contraste/tamaño; si tocas estos estilos, no reintroduzcas el problema:

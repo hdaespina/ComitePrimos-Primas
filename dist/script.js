@@ -216,7 +216,6 @@ if (stickyCta && topSection && 'IntersectionObserver' in window) {
 }
 
 const FORM_ID_PATTERN = /^[\w-]{20,}$/;
-const FORM_STORAGE_KEY = 'pp-formulario';
 const formUrl = (id, embedded) => `https://docs.google.com/forms/d/e/${id}/viewform${embedded ? '?embedded=true' : ''}`;
 const normalizeCode = (value) =>
   value.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -249,25 +248,31 @@ function setupCodeGate(gate) {
     input.setAttribute('aria-invalid', String(Boolean(message)));
   };
 
-  const unlock = (id, announce) => {
+  const unlock = (id) => {
     embed.querySelector('iframe').src = formUrl(id, true);
     fallback.querySelector('a').href = formUrl(id, false);
     gate.hidden = true;
     embed.hidden = false;
     fallback.hidden = false;
-    if (announce) {
-      embed.classList.add('is-unlocked');
-      fallback.classList.add('is-unlocked');
-      status.textContent = 'Código verificado. Ya puedes llenar tu ficha de inscripción.';
-    }
+    embed.classList.add('is-unlocked');
+    fallback.classList.add('is-unlocked');
+    status.textContent = 'Código verificado. Ya puedes llenar tu ficha de inscripción.';
   };
 
-  let saved = null;
-  try { saved = sessionStorage.getItem(FORM_STORAGE_KEY); } catch (e) { /* almacenamiento bloqueado */ }
-  if (saved && FORM_ID_PATTERN.test(saved)) {
-    unlock(saved, false);
-    return;
-  }
+  // El código se pide en cada visita: al volver con "atrás" el navegador restaura la página ya desbloqueada.
+  const lock = () => {
+    embed.querySelector('iframe').removeAttribute('src');
+    fallback.querySelector('a').href = '#formulario';
+    embed.hidden = true;
+    fallback.hidden = true;
+    gate.hidden = false;
+    input.value = '';
+    status.textContent = '';
+    setError('');
+  };
+  window.addEventListener('pageshow', (event) => { if (event.persisted) lock(); });
+
+  try { sessionStorage.removeItem('pp-formulario'); } catch (e) { /* versión anterior guardaba el ID aquí */ }
 
   if (!window.crypto?.subtle) {
     setError('Tu navegador no permite verificar el código. Pide ayuda en la comunidad de WhatsApp de la familia.');
@@ -292,8 +297,7 @@ function setupCodeGate(gate) {
     try {
       const id = await decryptFormId(code, payload);
       if (!FORM_ID_PATTERN.test(id)) throw new Error('ID inválido');
-      try { sessionStorage.setItem(FORM_STORAGE_KEY, id); } catch (e) { /* almacenamiento bloqueado */ }
-      unlock(id, true);
+      unlock(id);
     } catch (e) {
       setError('Ese código no es correcto. Revísalo con el familiar que te invitó.');
       gate.classList.remove('is-shaking');

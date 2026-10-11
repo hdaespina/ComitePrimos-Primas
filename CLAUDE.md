@@ -100,18 +100,18 @@ Pedido del comité: solo debe poder inscribirse quien recibió un código de un 
 - **Nunca escribas el código en texto plano** en el repo, commits o PRs: el repositorio es público. El dueño del proyecto lo conoce y lo comparte con la familia por fuera.
 - **Cambiar el código** (o el Form): `node tools/cifrar-formulario.mjs "NUEVO-CODIGO" "ID_DEL_FORM"` y reemplaza los cuatro atributos `data-*` del `<form data-code-gate>` en `dist/inscripcion.html` con lo que imprime. Si se cambia, actualiza también la validación de la pregunta "Código familiar" del Google Form (ver `docs/form-publisher-setup.md`).
 - **Límite honesto**: esto es un filtro, no seguridad bancaria. Corre en el navegador del visitante, y el ID del Form actual estuvo en texto plano en el historial de git antes de este cambio. El control real es (1) la pregunta "Código familiar" validada dentro del Google Form, que Google exige al enviar aunque alguien tenga el link directo, y (2) la revisión humana de cada solicitud por el comité.
-- Sin JavaScript el formulario no se puede abrir (hay un `<noscript>` que remite a WhatsApp). El link "¿No tienes el código? Pídelo por WhatsApp" usa el mismo número placeholder de la sección siguiente — actualízalo junto con los demás.
+- Sin JavaScript el formulario no se puede abrir (hay un `<noscript>` que remite a la comunidad de WhatsApp). El link "¿No tienes el código?" usa el mismo link de comunidad de la sección siguiente — actualízalo junto con los demás.
 
-## Dos llamados a la acción: "Conversar" y "Ficha de inscripción"
+## Dos llamados a la acción: "Comunidad de WhatsApp" y "Ficha de inscripción"
 
 El sitio siempre ofrece dos caminos, no uno solo — resolver una duda antes de comprometerse, o inscribirse directamente:
 
-- **Conversar por WhatsApp**: aparece en tres lugares — los hero-actions (`dist/index.html`), la intro de `#preguntas`, y justo arriba del formulario (`.form-card-note`, presente tanto en la tarjeta-CTA de `index.html` como en el formulario real de `inscripcion.html`). Los tres usan el mismo link `https://wa.me/<número>?text=<duda precargada>`.
+- **Comunidad de WhatsApp de la familia** (link definitivo del comité: `https://chat.whatsapp.com/HxWrnlptRM5IrbH3UNAWs3`): botón "Unirme a la comunidad de WhatsApp" en los hero-actions de `dist/index.html`, la intro de `#preguntas`, la `.form-card-note` de `index.html` e `inscripcion.html`, y en `inscripcion.html` también el texto "¿No tienes el código?" del código familiar y el `<noscript>`. Si el link cambia, búscalo por `chat.whatsapp.com` en `dist/` (5 lugares).
 - **Llenar ficha de inscripción**: el botón primario del hero, el botón al final de `#unirme`, la barra sticky y el micro-CTA de Jóvenes — todos enlazan a `./inscripcion.html`, la página donde vive el formulario real.
 
-**El número de WhatsApp (+502 5698-0267) es un placeholder de ejemplo** puesto por el dueño del proyecto — está marcado con un comentario `TODO` en `dist/index.html` (arriba del botón del hero). Hay que reemplazarlo por el número/contacto definitivo del comité antes de compartir el sitio públicamente con la familia. Si cambia, actualízalo en `dist/index.html` (hero, FAQ y form-card-note) y en `dist/inscripcion.html` (form-card-note y el link "Pídelo por WhatsApp" del código familiar) — buscar `wa.me/50256980267`.
+Antes se usaba un número individual (`wa.me`) con la duda precargada. El comité eligió su comunidad en lugar de un número; un link de comunidad/grupo no permite precargar mensaje, por eso el copy dice "únete" / "pregúntala en la comunidad" en vez de "conversemos". No vuelvas al número individual sin confirmarlo con el dueño del proyecto.
 
-Un link de grupo de WhatsApp (`chat.whatsapp.com/...`) no permite precargar el mensaje/duda — por eso se eligió un número individual (`wa.me`) en vez de un grupo; si más adelante el comité prefiere dirigir a un grupo, hay que cambiar el copy también ("conversemos" ya no aplicaría igual, sería más bien "únete al grupo").
+**Privacidad**: el link de la comunidad queda público en el sitio, así que cualquiera que llegue a la página podría pedir unirse, aunque no tenga el código familiar. La protección depende de que los administradores tengan activado "Aprobar nuevos participantes" en la configuración de la comunidad/grupo de WhatsApp.
 
 ## Proceso físico + digital de inscripción (evitar carga operativa)
 

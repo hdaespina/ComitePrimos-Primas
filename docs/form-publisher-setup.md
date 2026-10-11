@@ -33,6 +33,17 @@ Form Publisher reconoce cada campo por el **texto exacto de la pregunta**, así 
 | 15 | Confirmo que leeré el reglamento antes de mi primera aportación | Casilla de verificación | Sí |
 | 16 | Escribe tu nombre completo como confirmación de firma electrónica | Respuesta corta | Sí |
 
+### Pregunta de control: Código familiar (recomendada)
+
+El sitio ya pide el código familiar antes de mostrar el formulario, pero alguien con el link directo del Google Form podría saltarse la página. Para que Google exija el código al enviar, agrega **al inicio del Form** esta pregunta extra:
+
+1. Agrega una pregunta **Respuesta corta** con el texto exacto `Código familiar` y márcala como **Obligatoria**.
+2. En los tres puntos de la pregunta → **Validación de respuesta** → elige **Expresión regular** → **Coincide con**.
+3. En el patrón escribe el código en mayúsculas, aceptando minúsculas, espacios o guion. Para un código `PALABRA-0000` el patrón es: `(?i)^\s*PALABRA[\s-]*0000\s*$` (reemplaza `PALABRA` y `0000` por el código real que te dieron).
+4. Mensaje de error personalizado: `Ese código no es correcto. Pídeselo al familiar que te invitó.`
+
+Esta pregunta **no va en la plantilla del PDF** (Paso 2): el código no necesita quedar en la ficha del comité. Si el comité cambia el código, actualiza este patrón y el código del sitio al mismo tiempo (ver `CLAUDE.md` → "Código familiar").
+
 Notas:
 - No se pide un monto fijo de "cuota de inscripción" — eso lo define el reglamento vigente y se conversa con la persona al momento de inscribirse, no se congela en el formulario.
 - El campo 16 sustituye a la "Firma de Accionista" de la ficha física — Google Forms no tiene firma digital nativa, así que escribir el nombre completo funciona como confirmación equivalente. Si el comité prefiere una firma manuscrita real, eso se resuelve aparte en la reunión de bienvenida con el socio, no en el formulario.

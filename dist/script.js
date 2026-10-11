@@ -270,7 +270,7 @@ function setupCodeGate(gate) {
   }
 
   if (!window.crypto?.subtle) {
-    setError('Tu navegador no permite verificar el código. Escríbenos por WhatsApp y te ayudamos.');
+    setError('Tu navegador no permite verificar el código. Pide ayuda en la comunidad de WhatsApp de la familia.');
     input.disabled = true;
     button.disabled = true;
     return;

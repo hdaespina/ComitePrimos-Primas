@@ -57,7 +57,7 @@
           <a class="back-link" href="./index.html#unirme"><span aria-hidden="true">←</span> Volver al inicio</a>
           <p class="eyebrow eyebrow-blue">Ficha de inscripción</p>
           <h1>Da el paso oficial para hacerte socio.</h1>
-          <p class="reading-lead">Completa tus datos abajo. Un integrante del comité revisará tu solicitud y te contactará para continuar el proceso.</p>
+          <p class="reading-lead">Ten a mano el código familiar que te dio quien te invitó. Después completa tus datos y un integrante del comité revisará tu solicitud para continuar el proceso.</p>
         </div>
       </section>
 
@@ -69,14 +69,25 @@
               <p>Completa tus datos para iniciar tu inscripción como socio. Un integrante del comité revisará tu solicitud y te contactará.</p>
               <p class="form-card-note">¿Tienes dudas antes de llenarlo? <a class="text-link" href="https://wa.me/50256980267?text=Hola%2C%20tengo%20una%20duda%20sobre%20el%20Comit%C3%A9%20Primos%20%26%20Primas." target="_blank" rel="noopener">Conversemos por WhatsApp</a>.</p>
             </div>
-            <div class="form-embed">
-              <iframe
-                src="https://docs.google.com/forms/d/e/1FAIpQLScWN4IK62POvSHgihil0CW6I2sLC7W4-6HErXradeZQYVCqbA/viewform?embedded=true"
-                title="Formulario de inscripción — Comité Primos & Primas"
-                loading="lazy"
-              >Cargando formulario…</iframe>
+            <form class="code-gate" data-code-gate novalidate
+              data-iterations="150000" data-salt="5st+prATc1Obx5TxzSJhhA==" data-iv="kutNf4bbgx30+6/+" data-cipher="Z8aHw+0J9tw/XvMSgGAeJ1vbB/Neh/C1O3RPP+l0ogetG6QrgnukkYUzvq5jbDE22KUAb/+tL3RpPe2Aduv0pshde5gpIajP">
+              <span class="code-gate-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 14.5v2.5"/></svg></span>
+              <h3>Ingresa tu código familiar</h3>
+              <p id="code-help">Para cuidar que solo integrantes de la familia se inscriban, el formulario se abre con un código. Pídeselo al familiar que te invitó.</p>
+              <label class="code-gate-label" for="family-code">Código familiar</label>
+              <div class="code-gate-row">
+                <input id="family-code" name="codigo" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ej. PALABRA-0000" aria-describedby="code-help code-error" required />
+                <button class="button button-primary" type="submit">Continuar</button>
+              </div>
+              <p class="code-gate-error" id="code-error" aria-live="polite" data-code-error></p>
+              <p class="code-gate-alt">¿No tienes el código? <a class="text-link" href="https://wa.me/50256980267?text=Hola%2C%20quiero%20inscribirme%20al%20Comit%C3%A9%20Primos%20%26%20Primas%20y%20necesito%20el%20c%C3%B3digo%20familiar." target="_blank" rel="noopener">Pídelo por WhatsApp</a>.</p>
+              <noscript><p class="code-gate-error">Para verificar el código necesitas tener JavaScript activado en tu navegador. Si no puedes activarlo, escríbenos por WhatsApp y te ayudamos.</p></noscript>
+            </form>
+            <p class="sr-only" role="status" data-code-status></p>
+            <div class="form-embed" data-form-embed hidden>
+              <iframe title="Formulario de inscripción — Comité Primos & Primas">Cargando formulario…</iframe>
             </div>
-            <p class="form-fallback">¿El formulario no carga? <a class="text-link" href="https://docs.google.com/forms/d/e/1FAIpQLScWN4IK62POvSHgihil0CW6I2sLC7W4-6HErXradeZQYVCqbA/viewform" target="_blank" rel="noopener">Ábrelo en una pestaña nueva</a>.</p>
+            <p class="form-fallback" data-form-fallback hidden>¿El formulario no carga? <a class="text-link" href="#formulario" target="_blank" rel="noopener">Ábrelo en una pestaña nueva</a>.</p>
           </div>
         </div>
       </section>

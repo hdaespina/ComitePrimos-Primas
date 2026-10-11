@@ -28,6 +28,8 @@ Landing page pública para dar a conocer el comité familiar a los parientes y l
 │   ├── script.js
 │   ├── favicon.svg
 │   └── assets/
+├── tools/
+│   └── cifrar-formulario.mjs      # genera el ID del Google Form cifrado con el código familiar (no se publica)
 ├── .github/workflows/pages.yml    # publica dist/ en GitHub Pages en cada push a main
 └── .claude/skills/                # skills de este repo (ver abajo)
 ```
@@ -85,10 +87,20 @@ El llamado a la acción principal del sitio es inscribirse como socio llenando u
 
 - El formulario vive en `dist/inscripcion.html` → `.form-card` → `.form-embed iframe`. `dist/index.html` no tiene el iframe: su sección `#unirme` → `.form-card` termina en un botón "Llenar ficha de inscripción" que enlaza a `./inscripcion.html`.
 - Todos los CTA "Llenar ficha de inscripción" / "Quiero inscribirme" del sitio (hero, sticky-cta de `index.html` e `historia.html`, micro-CTA de Jóvenes) apuntan directo a `./inscripcion.html`. El `nav-cta` ("Quiero formar parte") y el paso 3 de `#unirme` siguen apuntando a `#unirme` — ahí se explica el proceso antes de mandar a la persona a la página del formulario.
-- El Google Form real del comité ya está conectado: ID `1FAIpQLScWN4IK62POvSHgihil0CW6I2sLC7W4-6HErXradeZQYVCqbA`, usado en `dist/inscripcion.html` tanto en el `src` del `iframe` (con `?embedded=true`) como en el link de fallback "Ábrelo en una pestaña nueva" (sin `?embedded=true`, con `target="_blank"`). Si el comité crea un Form nuevo en el futuro (por ejemplo, para separar temporadas de inscripción), reemplaza el ID en esos dos lugares.
+- El Google Form real del comité ya está conectado, pero su ID **no está escrito en texto plano** en el sitio ni en este archivo: está cifrado con el código familiar (ver sección "Código familiar" abajo). Al ingresar el código correcto, `dist/script.js` arma el `src` del `iframe` (con `?embedded=true`) y el link de fallback "Ábrelo en una pestaña nueva" (sin `?embedded=true`). Si el comité crea un Form nuevo, vuelve a cifrar su ID con `tools/cifrar-formulario.mjs`.
 - **Campos del Google Form**: la lista completa y definitiva (16 preguntas, con el texto exacto y el tipo de campo de cada una) vive en `docs/form-publisher-setup.md` → Paso 1 — ese archivo es la fuente de verdad, no la repitas de memoria en otro lugar. Incluye los campos mínimos para inscribirse y los que necesita el PDF automático (fecha de nacimiento, DPI, acciones/aportaciones, beneficiarios, confirmación de firma electrónica) — están todos en el mismo Form, no en dos formularios separados.
 - La altura del `iframe` está fijada en CSS (`.form-embed iframe`, con ajustes en los media queries de 1020px/780px) porque Google Forms no se autoajusta de alto. Si el formulario real queda más largo o corto que el actual, ajusta esas alturas usando `responsive-qa`.
 - No cambies este mecanismo (por ejemplo, a Supabase o Formspree) sin confirmarlo antes con el dueño del proyecto — fue una decisión explícita.
+
+## Código familiar (acceso al formulario)
+
+Pedido del comité: solo debe poder inscribirse quien recibió un código de un familiar. Hay **un solo código compartido** por toda la familia (no uno por socio, para no generar carga operativa — la trazabilidad de quién invitó ya la da la pregunta "Familiar que lo invitó / rama familiar").
+
+- **Cómo funciona**: `dist/inscripcion.html` muestra primero `.code-gate` (`<form data-code-gate>`). El ID del Google Form está cifrado con AES-GCM usando una clave derivada del código (PBKDF2-SHA256); los datos cifrados viven en los atributos `data-salt`, `data-iv`, `data-cipher` y `data-iterations` del gate. Con el código correcto se descifra el ID y se muestra el formulario; con uno incorrecto el descifrado falla y se muestra el error. El código se normaliza (mayúsculas, sin espacios, guiones ni tildes), así que "palabra 0000" y "PALABRA-0000" son lo mismo. Tras verificarlo, el ID queda en `sessionStorage` y no se vuelve a pedir mientras la pestaña siga abierta.
+- **Nunca escribas el código en texto plano** en el repo, commits o PRs: el repositorio es público. El dueño del proyecto lo conoce y lo comparte con la familia por fuera.
+- **Cambiar el código** (o el Form): `node tools/cifrar-formulario.mjs "NUEVO-CODIGO" "ID_DEL_FORM"` y reemplaza los cuatro atributos `data-*` del `<form data-code-gate>` en `dist/inscripcion.html` con lo que imprime. Si se cambia, actualiza también la validación de la pregunta "Código familiar" del Google Form (ver `docs/form-publisher-setup.md`).
+- **Límite honesto**: esto es un filtro, no seguridad bancaria. Corre en el navegador del visitante, y el ID del Form actual estuvo en texto plano en el historial de git antes de este cambio. El control real es (1) la pregunta "Código familiar" validada dentro del Google Form, que Google exige al enviar aunque alguien tenga el link directo, y (2) la revisión humana de cada solicitud por el comité.
+- Sin JavaScript el formulario no se puede abrir (hay un `<noscript>` que remite a WhatsApp). El link "¿No tienes el código? Pídelo por WhatsApp" usa el mismo número placeholder de la sección siguiente — actualízalo junto con los demás.
 
 ## Dos llamados a la acción: "Conversar" y "Ficha de inscripción"
 
@@ -97,7 +109,7 @@ El sitio siempre ofrece dos caminos, no uno solo — resolver una duda antes de 
 - **Conversar por WhatsApp**: aparece en tres lugares — los hero-actions (`dist/index.html`), la intro de `#preguntas`, y justo arriba del formulario (`.form-card-note`, presente tanto en la tarjeta-CTA de `index.html` como en el formulario real de `inscripcion.html`). Los tres usan el mismo link `https://wa.me/<número>?text=<duda precargada>`.
 - **Llenar ficha de inscripción**: el botón primario del hero, el botón al final de `#unirme`, la barra sticky y el micro-CTA de Jóvenes — todos enlazan a `./inscripcion.html`, la página donde vive el formulario real.
 
-**El número de WhatsApp (+502 5698-0267) es un placeholder de ejemplo** puesto por el dueño del proyecto — está marcado con un comentario `TODO` en `dist/index.html` (arriba del botón del hero). Hay que reemplazarlo por el número/contacto definitivo del comité antes de compartir el sitio públicamente con la familia. Si cambia, actualízalo en `dist/index.html` (hero, FAQ y form-card-note) y en `dist/inscripcion.html` (form-card-note) — buscar `wa.me/50256980267`.
+**El número de WhatsApp (+502 5698-0267) es un placeholder de ejemplo** puesto por el dueño del proyecto — está marcado con un comentario `TODO` en `dist/index.html` (arriba del botón del hero). Hay que reemplazarlo por el número/contacto definitivo del comité antes de compartir el sitio públicamente con la familia. Si cambia, actualízalo en `dist/index.html` (hero, FAQ y form-card-note) y en `dist/inscripcion.html` (form-card-note y el link "Pídelo por WhatsApp" del código familiar) — buscar `wa.me/50256980267`.
 
 Un link de grupo de WhatsApp (`chat.whatsapp.com/...`) no permite precargar el mensaje/duda — por eso se eligió un número individual (`wa.me`) en vez de un grupo; si más adelante el comité prefiere dirigir a un grupo, hay que cambiar el copy también ("conversemos" ya no aplicaría igual, sería más bien "únete al grupo").
 

@@ -18,7 +18,7 @@ Ver `CLAUDE.md` para el contexto completo del proyecto (estructura, identidad de
 
 ## Formulario de inscripción
 
-El formulario vive en `dist/inscripcion.html` (no en la landing) e incrusta el Google Form real del comité (ver detalles en `CLAUDE.md`).
+El formulario vive en `dist/inscripcion.html` (no en la landing) e incrusta el Google Form real del comité. Para abrirlo hay que ingresar el código familiar que comparte un integrante de la familia; para cambiar ese código usa `tools/cifrar-formulario.mjs` (ver detalles en `CLAUDE.md` → "Código familiar").
 
 Para que cada inscripción genere automáticamente un PDF con el formato de la ficha física del comité (sin transcribir nada a mano), sigue la guía paso a paso en [`docs/form-publisher-setup.md`](./docs/form-publisher-setup.md).
 

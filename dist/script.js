@@ -215,12 +215,109 @@ if (stickyCta && topSection && 'IntersectionObserver' in window) {
   }
 }
 
+const FORM_ID_PATTERN = /^[\w-]{20,}$/;
+const FORM_STORAGE_KEY = 'pp-formulario';
+const formUrl = (id, embedded) => `https://docs.google.com/forms/d/e/${id}/viewform${embedded ? '?embedded=true' : ''}`;
+const normalizeCode = (value) =>
+  value.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+const fromBase64 = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+
+async function decryptFormId(code, { salt, iv, cipher, iterations }) {
+  const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: fromBase64(salt), iterations, hash: 'SHA-256' },
+    material,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['decrypt'],
+  );
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromBase64(iv) }, key, fromBase64(cipher));
+  return new TextDecoder().decode(plain);
+}
+
+function setupCodeGate(gate) {
+  const input = gate.querySelector('input');
+  const button = gate.querySelector('button[type="submit"]');
+  const error = gate.querySelector('[data-code-error]');
+  const status = document.querySelector('[data-code-status]');
+  const embed = document.querySelector('[data-form-embed]');
+  const fallback = document.querySelector('[data-form-fallback]');
+  const payload = { ...gate.dataset, iterations: Number(gate.dataset.iterations) };
+
+  const setError = (message) => {
+    error.textContent = message;
+    input.setAttribute('aria-invalid', String(Boolean(message)));
+  };
+
+  const unlock = (id, announce) => {
+    embed.querySelector('iframe').src = formUrl(id, true);
+    fallback.querySelector('a').href = formUrl(id, false);
+    gate.hidden = true;
+    embed.hidden = false;
+    fallback.hidden = false;
+    if (announce) {
+      embed.classList.add('is-unlocked');
+      fallback.classList.add('is-unlocked');
+      status.textContent = 'Código verificado. Ya puedes llenar tu ficha de inscripción.';
+    }
+  };
+
+  let saved = null;
+  try { saved = sessionStorage.getItem(FORM_STORAGE_KEY); } catch (e) { /* almacenamiento bloqueado */ }
+  if (saved && FORM_ID_PATTERN.test(saved)) {
+    unlock(saved, false);
+    return;
+  }
+
+  if (!window.crypto?.subtle) {
+    setError('Tu navegador no permite verificar el código. Escríbenos por WhatsApp y te ayudamos.');
+    input.disabled = true;
+    button.disabled = true;
+    return;
+  }
+
+  input.addEventListener('input', () => { if (error.textContent) setError(''); });
+
+  gate.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const code = normalizeCode(input.value);
+    if (!code) {
+      setError('Escribe el código familiar para continuar.');
+      input.focus();
+      return;
+    }
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.textContent = 'Verificando…';
+    try {
+      const id = await decryptFormId(code, payload);
+      if (!FORM_ID_PATTERN.test(id)) throw new Error('ID inválido');
+      try { sessionStorage.setItem(FORM_STORAGE_KEY, id); } catch (e) { /* almacenamiento bloqueado */ }
+      unlock(id, true);
+    } catch (e) {
+      setError('Ese código no es correcto. Revísalo con el familiar que te invitó.');
+      gate.classList.remove('is-shaking');
+      void gate.offsetWidth;
+      gate.classList.add('is-shaking');
+      input.focus();
+      input.select();
+    } finally {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+      button.textContent = 'Continuar';
+    }
+  });
+}
+
+const codeGate = document.querySelector('[data-code-gate]');
+if (codeGate) setupCodeGate(codeGate);
+
 const shareButton = document.querySelector('[data-share-invite]');
 const shareStatus = document.querySelector('[data-share-status]');
 
 const shareData = {
   title: 'Primos & Primas — Comité Familiar',
-  text: 'Conoce la historia y los beneficios del Comité Familiar de Ahorro y Préstamo Primos & Primas, y cómo hacerte socio.',
+  text: 'Conoce la historia y los beneficios del Comité Familiar de Ahorro y Préstamo Primos & Primas, y cómo hacerte socio. Para inscribirte necesitas el código familiar: pídemelo.',
   url: `${window.location.origin}${window.location.pathname}`,
 };
 
